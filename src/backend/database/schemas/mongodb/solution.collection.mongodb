@@ -1,0 +1,44 @@
+db.createCollection('solution', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      required: ['_id', 'userId', 'groupId', 'description'],
+      additionalProperties: false,
+      properties: {
+        _id: { bsonType: 'objectId' },
+        userId: {
+          bsonType: 'objectId',
+          description: 'user that solve the task'
+        },
+        groupId: {
+          bsonType: 'objectId',
+          description: 'group where the solution it belongs'
+        },
+        taskId: {
+          bsonType: 'objectId',
+          description: 'task the solution belongs to'
+        }
+        feature: {
+          bsonType: 'array',
+          items: {
+            bsonType: 'string'
+          },
+          description: 'array of features associated to the solution'
+        },
+        code: {
+          bsonType: 'object',
+          required: ['language', 'content'],
+          additionalProperties: false,
+          properties: {
+            language: { bsonType: 'string' },
+            content: { bsonType: 'string' }
+          }
+        },
+        description: {
+          bsonType: 'string',
+          description: 'description of the solution'
+        }
+      }
+    }
+  }
+})

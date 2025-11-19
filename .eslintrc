@@ -1,0 +1,22 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["jest", "@typescript-eslint"],
+  "extends": [
+    "standard-with-typescript",
+    "plugin:jest/recommended"
+  ],
+  "env": {
+    "jest": true
+  },
+  "overrides": [
+    {
+      "files": ["*.test.ts", "*.spec.ts"],
+      "env": {
+        "jest": true
+      }
+    }
+  ],
+  "rules": {
+    "@typescript-eslint/restrict-plus-operands": ["error"]
+  }
+}

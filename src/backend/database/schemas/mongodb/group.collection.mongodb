@@ -1,0 +1,55 @@
+db.createCollection('group', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      required: ['_id', 'techLead', 'name', 'color'],
+      additionalProperties: false,
+      properties: {
+        _id: {
+          bsonType: 'objectId'
+        },
+        techLead: {
+          bsonType: 'array',
+          maxItems: 5, 
+          items: {
+            bsonType: 'object',
+            description: 'tech lead',
+            required: ['fullName', 'account'],
+            additionalProperties: false,
+            properties: {
+              fullName: { bsonType: 'string' },
+              account: { bsonType: 'string' }
+            }
+          }
+        },
+        name: {
+          bsonType: 'string',
+          description: 'group name'
+        },
+        repository: {
+          bsonType: 'string',
+          description: 'project repository'
+        },
+        member: {
+          bsonType: 'array',
+          items: {
+            bsonType: 'object',
+            description: 'member',
+            required: ['account', 'fullName', 'role'],
+            additionalProperties: false,
+            properties: {
+              account: { bsonType: 'string' },
+              fullName: { bsonType: 'string' },
+              role: { bsonType: 'string' }
+            }
+          },
+          description: 'members array'
+        },
+        color: {
+          bsonType: 'string',
+          description: 'color for the group'
+        }
+      }
+    }
+  }
+})

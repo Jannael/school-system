@@ -1,0 +1,51 @@
+db.createCollection('task', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      required: ['_id', 'groupId', 'user', 'name'],
+      additionalProperties: false,
+      properties: {
+        _id: { bsonType: 'objectId' },
+        groupId: { 
+          bsonType: 'objectId',
+          description: 'id of the group where it belongs'
+        },
+        user: {
+          bsonType: 'array',
+          items: {
+            bsonType: 'objectId'
+          },
+          description: 'array of users with the task'
+        },
+        name: {
+          bsonType: 'string',
+          description: 'task name'
+        },
+        code: {
+          bsonType: 'object',
+          required: ['language', 'content'],
+          additionalProperties: false,
+          properties: {
+            language: {bsonType: 'string'},
+            content: {bsonType: 'string'}
+          }
+        },
+        feature: {
+          bsonType: 'array',
+          items: {
+            bsonType: 'string'
+          },
+          description: 'array of features asociated to the task'
+        },
+        description: {
+          bsonType: 'string',
+          description: 'description for the task'
+        },
+        isComplete: {
+          bsonType: 'bool',
+          description: 'to indicate the task state'
+        }
+      }
+    }
+  }
+})

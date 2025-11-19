@@ -1,0 +1,71 @@
+db.createCollection('user', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      required: ['_id', 'fullName', 'account', 'pwd'],
+      additionalProperties: false,
+      properties: {
+        _id: {
+          bsonType: 'objectId'
+        },
+        fullName: {
+          bsonType: 'string',
+          description: "Full user name"
+        },
+        account: {
+          bsonType: 'string',
+          description: 'Verified user account'
+        },
+        pwd: {
+          bsonType: 'string',
+          description: 'password'
+        },
+        nickName: {
+          bsonType: 'string',
+          description: 'nickname'
+        },
+        refreshToken: {
+          bsonType: 'array',
+          uniqueItems: true,
+          maxItems: 3,
+          items: {
+            bsonType: 'string'
+          },
+          description: 'refreshToken for the user to validate when generating an access token'
+        },
+        invitation: {
+          type: 'array',
+          uniqueItems: true,
+          maxItems: 5,
+          items: {
+            bsonType: 'object',
+            required: ['name', '_id'],
+            additionalProperties: false,
+            properties: {
+              name: { bsonType: 'string' },
+              _id: { bsonType: 'objectId' },
+              color: { bsonType: 'string' }
+            }
+          }
+        },
+        group: {
+          type: 'array',
+          uniqueItems: true,
+          maxItems: 5,
+          items: {
+            bsonType: 'object',
+            required: ['name', '_id'],
+            additionalProperties: false,
+            properties: {
+              name: { bsonType: 'string' },
+              _id: { bsonType: 'objectId' },
+              color: { bsonType: 'string' }
+            }
+          }
+        }
+      }
+    }
+  }
+})
+
+db.user.createIndex({account: 1}, {unique: true})
