@@ -17,8 +17,8 @@ const functions = {
   user: {
     get: async function (req: Request, res: Response): Promise<IScore> {
       const accessToken = getToken(req, 'accessToken', JWT_ACCESS_TOKEN_ENV, CRYPTO_ACCESS_TOKEN_ENV)
-      if (req.body.semester === undefined) throw new UserBadRequest('Missing data', 'You need to send the semester you want')
-      return await model.user.get(accessToken.account, req.body.semester)
+      if (req.params?.semester === undefined) throw new UserBadRequest('Missing data', 'You need to send the semester you want')
+      return await model.user.get(accessToken.account, Number(req.params.semester))
     },
     newSemester: async function (req: Request, res: Response): Promise<boolean> {
       const accessToken = getToken(req, 'accessToken', JWT_ACCESS_TOKEN_ENV, CRYPTO_ACCESS_TOKEN_ENV)
