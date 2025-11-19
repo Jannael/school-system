@@ -5,6 +5,7 @@ import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import { IEnv } from './interface/env'
 import middleware from './middleware/merge'
+import cors from 'cors'
 
 dotenv.config({ quiet: true })
 
@@ -17,6 +18,7 @@ export async function createApp (): Promise<express.Express> {
 
   const app = express()
 
+  app.use(cors())
   app.use(express.json())
   app.use(cookieParser())
   app.use(middleware.header)
