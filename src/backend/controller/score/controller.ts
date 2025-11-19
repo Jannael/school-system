@@ -10,7 +10,6 @@ const controller = {
         const result = await fn.user.get(req, res)
         res.json({ complete: true, result })
       } catch (e) {
-        console.log(e)
         handler.user(res, e as CustomError)
       }
     },

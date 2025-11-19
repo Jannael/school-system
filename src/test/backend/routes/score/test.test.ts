@@ -50,12 +50,22 @@ afterAll(async () => {
 })
 
 describe('/score/v1', () => {
-  test('/get', async () => {
+  test('/get/', async () => {
     const res = await agent
       .get('/score/v1/get/1')
 
     expect(res.status).toBe(200)
     expect(res.body.complete).toBe(true)
     expect(res.body.result).toBeDefined()
+  })
+
+  test('/newSemester/', async () => {
+    const res = await agent
+      .post('/score/v1/newSemester/')
+      .send({
+        subject: ['Art', 'Physical Education']
+      })
+    expect(res.status).toBe(200)
+    expect(res.body.complete).toBe(true)
   })
 })

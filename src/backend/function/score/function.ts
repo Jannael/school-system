@@ -22,7 +22,7 @@ const functions = {
     },
     newSemester: async function (req: Request, res: Response): Promise<boolean> {
       const accessToken = getToken(req, 'accessToken', JWT_ACCESS_TOKEN_ENV, CRYPTO_ACCESS_TOKEN_ENV)
-      if (req.body?.subject === undefined || Array.isArray(req.body?.subject)) throw new UserBadRequest('Missing data', 'You need to send the subjects you want to add to the new semester')
+      if (req.body?.subject === undefined || !Array.isArray(req.body?.subject)) throw new UserBadRequest('Missing data', 'You need to send the subjects you want to add to the new semester')
 
       return await model.user.newSemester(accessToken.account, req.body.subject)
     }
