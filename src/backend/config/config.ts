@@ -19,5 +19,8 @@ export default {
         minimize: false
       }
     }
+  },
+  semester: {
+    total: 5
   }
 } as const
