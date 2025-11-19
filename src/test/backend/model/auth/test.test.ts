@@ -28,8 +28,8 @@ describe('auth model', () => {
       fullName: 'test',
       account: 'test@email.com',
       pwd: 'test',
-      role: ['documenter'],
-      nickName: 'test'
+      role: ['student'],
+      school: 'test school'
     })
   })
 
@@ -148,8 +148,8 @@ describe('auth model', () => {
         _id: expect.any(Types.ObjectId),
         fullName: 'test',
         account: 'test@email.com',
-        role: ['documenter'],
-        nickName: 'test'
+        role: ['student'],
+        school: 'test school'
       })
     })
 

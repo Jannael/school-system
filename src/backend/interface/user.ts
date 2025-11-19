@@ -4,9 +4,9 @@ export interface IUser {
   _id?: Types.ObjectId
   fullName: string
   account: string
+  school: string
   pwd: string
   role: string[]
-  nickName?: string | null
   refreshToken?: string[] | null
 }
 

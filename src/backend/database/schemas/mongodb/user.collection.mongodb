@@ -28,10 +28,6 @@ db.createCollection('user', {
           },
           description: 'roles as strings'
         },
-        nickName: {
-          bsonType: 'string',
-          description: 'nickname'
-        }
         refreshToken: {
           bsonType: 'array',
           uniqueItems: true,

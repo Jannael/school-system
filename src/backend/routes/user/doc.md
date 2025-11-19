@@ -10,7 +10,6 @@ _Method: GET_
 - `fullName`
 - `account`
 - `role`
-- `nickName`
 - `complete`: boolean
 
 `complete` field its to help frontend developer to handle the response its in error output as well
@@ -41,13 +40,11 @@ _Method: POST_
 - `account`
 - `pwd`
 - `role`
-- `nickName`
 
 ### Output
 - `fullName`
 - `account`
 - `role`
-- `nickName`
 - `complete`: boolean
 
 `complete` field its to help frontend developer to handle the response its in error output as well
@@ -82,14 +79,12 @@ _Method: PUT_
 Here you only can update this fields
 - `fullName`
 - `role`
-- `nickName`
 
 ### Output
 - `user`:
   - `fullName`
   - `account`
   - `role`
-  - `nickName`
 - `complete`: boolean
 
 `complete` field its to help frontend developer to handle the response its in error output as well
@@ -157,7 +152,6 @@ realize that the only way to change the account its been logged In
     - `fullName`
     - `account`
     - `role`
-    - `nickName`
 - `complete`: boolean
 
 `complete` field its to help frontend developer to handle the response its in error output as well

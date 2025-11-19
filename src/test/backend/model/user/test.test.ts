@@ -26,11 +26,11 @@ describe('user model', () => {
   describe('create user', () => {
     test('', async () => {
       const res = await model.user.create({
+        school: 'test school',
         fullName: 'test',
         account: 'test@gmail.com',
         pwd: 'test',
-        role: ['documenter'],
-        nickName: 'test'
+        role: ['student']
       })
 
       userId = res._id
@@ -40,8 +40,8 @@ describe('user model', () => {
         _id: expect.any(Types.ObjectId),
         fullName: 'test',
         account: 'test@gmail.com',
-        role: ['documenter'],
-        nickName: 'test'
+        role: ['student'],
+        school: 'test school'
       })
     })
 
@@ -53,8 +53,8 @@ describe('user model', () => {
               fullName: 'test',
               account: 'test@gmail.com',
               pwd: 'test',
-              role: ['documenter'],
-              nickName: 'test'
+              role: ['student'],
+              school: 'test school'
             })
           },
           error: new DuplicateData('User already exists', 'This account belongs to an existing user')
@@ -64,13 +64,12 @@ describe('user model', () => {
             const obj = {
               account: 'test1@gmail.com',
               pwd: 'test1',
-              role: ['documenter'],
-              nickName: 'test1'
+              role: ['student']
             } as unknown as IUser
 
             await model.user.create(obj)
           },
-          error: new UserBadRequest('Invalid credentials', 'FullName is required')
+          error: new UserBadRequest('Invalid credentials', 'School is required')
         },
         {
           fn: async function () {
@@ -80,8 +79,8 @@ describe('user model', () => {
               fullName: 'test',
               account: 'test@gmail.com',
               pwd: 'test',
-              role: ['documenter'],
-              nickName: 'test'
+              role: ['student'],
+              school: 'test school'
             }
 
             await model.user.create(obj)
@@ -95,8 +94,8 @@ describe('user model', () => {
               fullName: 'test',
               account: 'test@gmail.com',
               pwd: 'test',
-              role: ['documenter'],
-              nickName: 'test'
+              role: ['student'],
+              school: 'test school'
             }
 
             await model.user.create(obj)
@@ -109,8 +108,8 @@ describe('user model', () => {
               fullName: 'test',
               account: 'test',
               pwd: 'test',
-              role: ['documenter'],
-              nickName: 'test'
+              role: ['student'],
+              school: 'test school'
             }
 
             await model.user.create(obj)
@@ -142,8 +141,8 @@ describe('user model', () => {
         _id: expect.any(Types.ObjectId),
         account: 'test@gmail.com',
         fullName: 'test1',
-        nickName: 'test',
-        role: ['documenter']
+        role: ['student'],
+        school: 'test school'
       })
     })
 
@@ -197,8 +196,8 @@ describe('user model', () => {
         _id: expect.any(Types.ObjectId),
         fullName: 'test1',
         account: 'test2@gmail.com',
-        role: ['documenter'],
-        nickName: 'test'
+        role: ['student'],
+        school: 'test school'
       })
     })
 

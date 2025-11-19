@@ -23,8 +23,8 @@ beforeAll(async () => {
     fullName: 'test',
     account: 'test@gmail.com',
     pwd: 'test',
-    role: ['documenter'],
-    nickName: 'test'
+    role: ['student'],
+    school: 'test school'
   })
 })
 
@@ -59,8 +59,8 @@ describe('/user/v1/', () => {
       expect(res.body).toStrictEqual({
         fullName: 'test',
         account: 'test@gmail.com',
-        role: ['documenter'],
-        nickName: 'test',
+        role: ['student'],
+        school: 'test school',
         complete: true
       })
     })
@@ -120,16 +120,18 @@ describe('/user/v1/', () => {
           fullName: 'test',
           account: 'create@gmail.com',
           pwd: '123456',
-          role: ['documenter'],
-          nickName: 'test'
+          role: ['student'],
+          school: 'test school'
         })
+
       expect(res.body).toStrictEqual({
         fullName: 'test',
         account: 'create@gmail.com',
-        role: ['documenter'],
-        nickName: 'test',
-        complete: true
+        role: ['student'],
+        complete: true,
+        school: 'test school'
       })
+
       expect(res.headers['set-cookie'][0]).toMatch(/refreshToken=.*HttpOnly$/)
       expect(res.headers['set-cookie'][1]).toMatch(/accessToken=.*HttpOnly$/)
       expect(res.headers['set-cookie'][2]).toMatch(/account=.*GMT$/)
@@ -205,8 +207,7 @@ describe('/user/v1/', () => {
                 fullName: 'test',
                 account: 'create@gmail.com',
                 pwd: '123456',
-                role: ['documenter'],
-                nickName: 'test'
+                role: ['student']
               })
           },
           error: {
@@ -237,9 +238,9 @@ describe('/user/v1/', () => {
               .post(endpoint)
               .send({
                 account: 'create1@gmail.com',
+                school: 'test school',
                 pwd: '123456',
-                role: ['documenter'],
-                nickName: 'test'
+                role: ['student']
               })
           },
           error: {
@@ -295,8 +296,8 @@ describe('/user/v1/', () => {
       expect(res.body.user).toStrictEqual({
         fullName: 'new Name',
         account: 'test@gmail.com',
-        role: ['documenter'],
-        nickName: 'test'
+        role: ['student'],
+        school: 'test school'
       })
       expect(res.headers['set-cookie'][2]).toMatch(/account=.*GMT$/)
 
@@ -306,9 +307,9 @@ describe('/user/v1/', () => {
       expect(secure.body).toStrictEqual({
         fullName: 'new Name',
         account: 'test@gmail.com',
-        role: ['documenter'],
-        nickName: 'test',
-        complete: true
+        role: ['student'],
+        complete: true,
+        school: 'test school'
       })
 
       user = res.body.user
@@ -424,8 +425,8 @@ describe('/user/v1/', () => {
       expect(res.body.user).toStrictEqual({
         fullName: 'new Name',
         account: 'test1@gmail.com',
-        role: ['documenter'],
-        nickName: 'test'
+        role: ['student'],
+        school: 'test school'
       })
       expect(res.headers['set-cookie'][2]).toMatch(/newAccount_account=.*GMT$/)
 
@@ -437,9 +438,9 @@ describe('/user/v1/', () => {
       expect(secure.body).toStrictEqual({
         fullName: 'new Name',
         account: 'test1@gmail.com',
-        role: ['documenter'],
-        nickName: 'test',
-        complete: true
+        role: ['student'],
+        complete: true,
+        school: 'test school'
       })
     })
 
@@ -577,8 +578,8 @@ describe('/user/v1/', () => {
               fullName: 'test',
               account: 'test@gmail.com',
               pwd: 'test',
-              role: ['documenter'],
-              nickName: 'test'
+              role: ['student'],
+              school: 'test school'
             })
 
             await agent
