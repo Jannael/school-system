@@ -84,4 +84,13 @@ describe('score model', () => {
       })
     })
   })
+
+  describe('teacher', () => {
+    test('update', async () => {
+      const res = await model.teacher.update(user.account, 1, 'Math', 95, 'One')
+      expect(res).toBe(true)
+      const guard = await model.user.get(user.account, 1)
+      expect(guard.One.find(item => item.subject === 'Math')?.score).toBe(95)
+    })
+  })
 })
