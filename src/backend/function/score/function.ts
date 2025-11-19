@@ -40,7 +40,7 @@ const functions = {
         )
       ) throw new UserBadRequest('Missing data', 'You need to send account, semester, subject, score, partial(One, Two, Three)')
 
-      return await model.teacher.update(req.body.account, req.body.semester, req.body.subject, req.body.score, req.body.partial``)
+      return await model.teacher.update(req.body.account, req.body.semester, req.body.subject, req.body.score, req.body.partial)
     }
   }
 }
