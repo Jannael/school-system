@@ -5,7 +5,7 @@ export interface IUser {
   fullName: string
   account: string
   school: string
-  pwd: string
+  pwd?: string
   role: string[]
   refreshToken?: string[] | null
 }

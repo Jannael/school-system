@@ -5,6 +5,10 @@ import { IScore } from '../../../interface/score'
 const partialSchema = new Schema({
   subject: { type: String, required: true },
   score: { type: Number, required: true }
+}, {
+  ...config.database.mongodb.schemaOptions,
+  versionKey: false,
+  _id: false
 })
 
 const schema = new Schema({

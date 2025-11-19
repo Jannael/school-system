@@ -17,7 +17,7 @@ const model = {
     create: async function (data: IUser, subjectArray: string[]): Promise<IRefreshToken> {
       try {
         if (data._id !== undefined) throw new UserBadRequest('Invalid credentials', 'You can not put the _id yourself')
-        if (data.refreshToken !== undefined) throw new UserBadRequest('Invalid credentials', 'You can not put the refreshToken yourself')
+        if (data.refreshToken !== undefined || data.pwd === undefined) throw new UserBadRequest('Invalid credentials', 'You can not put the refreshToken yourself')
         validator.user.create(data)
 
         const exists = await dbModel.exists({ account: data.account })
