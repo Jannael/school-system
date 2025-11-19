@@ -6,6 +6,7 @@ import dbModel from '../../../../backend/database/schemas/node/user'
 import { IEnv } from '../../../../backend/interface/env'
 import { IRefreshToken } from '../../../../backend/interface/user'
 import { NotFound, UserBadRequest } from '../../../../backend/error/error'
+import scoreDbModel from '../../../../backend/database/schemas/node/score'
 
 dotenv.config({ quiet: true })
 const { DB_URL_ENV_TEST } = process.env as Pick<IEnv, 'DB_URL_ENV_TEST'>
@@ -15,6 +16,7 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
+  await scoreDbModel.deleteMany({})
   await dbModel.deleteMany({})
   await mongoose.connection.close()
 })
@@ -30,7 +32,7 @@ describe('auth model', () => {
       pwd: 'test',
       role: ['student'],
       school: 'test school'
-    })
+    }, ['Math', 'Science', 'History'])
   })
 
   describe('auth refreshToken', () => {

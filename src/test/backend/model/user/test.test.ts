@@ -5,6 +5,7 @@ import model from '../../../../backend/model/user/model'
 import dbModel from './../../../../backend/database/schemas/node/user'
 import dotenv from 'dotenv'
 import mongoose, { Types } from 'mongoose'
+import scoreDbModel from '../../../../backend/database/schemas/node/score'
 
 dotenv.config({ quiet: true })
 const { DB_URL_ENV_TEST } = process.env as Pick<IEnv, 'DB_URL_ENV_TEST'>
@@ -14,6 +15,7 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
+  await scoreDbModel.deleteMany({})
   await dbModel.deleteMany({})
   await mongoose.connection.close()
 })
@@ -31,7 +33,7 @@ describe('user model', () => {
         account: 'test@gmail.com',
         pwd: 'test',
         role: ['student']
-      })
+      }, ['Math', 'Science', 'History'])
 
       userId = res._id
       user = res
@@ -55,7 +57,7 @@ describe('user model', () => {
               pwd: 'test',
               role: ['student'],
               school: 'test school'
-            })
+            }, ['Math', 'Science', 'History'])
           },
           error: new DuplicateData('User already exists', 'This account belongs to an existing user')
         },
@@ -67,7 +69,7 @@ describe('user model', () => {
               role: ['student']
             } as unknown as IUser
 
-            await model.user.create(obj)
+            await model.user.create(obj, ['Math', 'Science', 'History'])
           },
           error: new UserBadRequest('Invalid credentials', 'School is required')
         },
@@ -83,7 +85,7 @@ describe('user model', () => {
               school: 'test school'
             }
 
-            await model.user.create(obj)
+            await model.user.create(obj, ['Math', 'Science', 'History'])
           },
           error: new UserBadRequest('Invalid credentials', 'You can not put the _id yourself')
         },
@@ -98,7 +100,7 @@ describe('user model', () => {
               school: 'test school'
             }
 
-            await model.user.create(obj)
+            await model.user.create(obj, ['Math', 'Science', 'History'])
           },
           error: new UserBadRequest('Invalid credentials', 'You can not put the refreshToken yourself')
         },
@@ -112,7 +114,7 @@ describe('user model', () => {
               school: 'test school'
             }
 
-            await model.user.create(obj)
+            await model.user.create(obj, ['Math', 'Science', 'History'])
           },
           error: new UserBadRequest('Invalid credentials', 'Invalid email address')
         }

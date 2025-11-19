@@ -6,6 +6,7 @@ import dotenv from 'dotenv'
 import { IEnv } from '../../../../backend/interface/env'
 import userModel from './../../../../backend/model/user/model'
 import { IRefreshToken } from '../../../../backend/interface/user'
+import scoreDbModel from '../../../../backend/database/schemas/node/score'
 
 dotenv.config({ quiet: true })
 const { TEST_PWD_ENV } = process.env as unknown as IEnv
@@ -24,10 +25,11 @@ beforeAll(async () => {
     pwd: 'test',
     role: ['student'],
     school: 'test school'
-  })
+  }, ['Math', 'Science', 'History'])
 })
 
 afterAll(async () => {
+  await scoreDbModel.deleteMany({})
   await userModel.user.delete(user._id)
   await mongoose.connection.close()
 })

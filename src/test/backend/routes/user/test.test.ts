@@ -7,6 +7,7 @@ import { IEnv } from '../../../../backend/interface/env'
 import userModel from './../../../../backend/model/user/model'
 import { IRefreshToken } from '../../../../backend/interface/user'
 import dbModel from './../../../../backend/database/schemas/node/user'
+import scoreDbModel from '../../../../backend/database/schemas/node/score'
 
 dotenv.config({ quiet: true })
 const { TEST_PWD_ENV } = process.env as unknown as IEnv
@@ -25,10 +26,11 @@ beforeAll(async () => {
     pwd: 'test',
     role: ['student'],
     school: 'test school'
-  })
+  }, ['Math', 'Science', 'History'])
 })
 
 afterAll(async () => {
+  await scoreDbModel.deleteMany({})
   await dbModel.deleteMany({})
   await mongoose.connection.close()
 })
@@ -121,7 +123,8 @@ describe('/user/v1/', () => {
           account: 'create@gmail.com',
           pwd: '123456',
           role: ['student'],
-          school: 'test school'
+          school: 'test school',
+          subject: ['Math', 'Science']
         })
 
       expect(res.body).toStrictEqual({
@@ -158,7 +161,8 @@ describe('/user/v1/', () => {
             return await request(app)
               .post(endpoint)
               .send({
-                user: 'test'
+                user: 'test',
+                subject: ['Math', 'Science']
               })
           },
           error: {
@@ -174,7 +178,8 @@ describe('/user/v1/', () => {
               .post(endpoint)
               .set('Cookie', ['account=value'])
               .send({
-                user: 'test'
+                user: 'test',
+                subject: ['Math', 'Science']
               })
           },
           error: {
@@ -207,7 +212,8 @@ describe('/user/v1/', () => {
                 fullName: 'test',
                 account: 'create@gmail.com',
                 pwd: '123456',
-                role: ['student']
+                role: ['student'],
+                subject: ['Math', 'Science']
               })
           },
           error: {
@@ -240,7 +246,8 @@ describe('/user/v1/', () => {
                 account: 'create1@gmail.com',
                 school: 'test school',
                 pwd: '123456',
-                role: ['student']
+                role: ['student'],
+                subject: ['Math', 'Science']
               })
           },
           error: {
@@ -573,14 +580,13 @@ describe('/user/v1/', () => {
         {
           fn: async function () {
             const agent = request.agent(app)
-
             user = await userModel.user.create({
               fullName: 'test',
-              account: 'test@gmail.com',
+              account: 'testDelete@gmail.com',
               pwd: 'test',
               role: ['student'],
               school: 'test school'
-            })
+            }, ['Math', 'Science', 'History'])
 
             await agent
               .post('/auth/v1/request/refreshToken/code/')

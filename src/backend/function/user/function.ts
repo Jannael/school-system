@@ -50,6 +50,10 @@ const functions = {
       if (req.cookies?.account === undefined ||
         req.body === undefined) throw new UserBadRequest('Invalid credentials', 'Account not verified')
 
+      if (req.body.subject === undefined || !Array.isArray(req.body.subject) || req.body.subject.length === 0) {
+        throw new UserBadRequest('Missing data', 'Subject array is required to create the user score schema')
+      }
+
       const jwtAccount = decrypt(req.cookies.account, CRYPTO_AUTH_ENV)
       const decoded = jwt.verify(jwtAccount, JWT_AUTH_ENV)
       if (typeof decoded === 'string') throw new UserBadRequest('Invalid credentials', 'Account not verified')
@@ -58,7 +62,7 @@ const functions = {
       req.body.account = decoded.account
 
       const validData = validator.user.create(req.body)
-      const result = await model.user.create(validData)
+      const result = await model.user.create(validData, req.body.subject)
 
       const jwtRefreshToken = jwt.sign(result, JWT_REFRESH_TOKEN_ENV, config.jwt.refreshToken as SignOptions)
       const jwtAccessToken = jwt.sign(result, JWT_ACCESS_TOKEN_ENV, config.jwt.accessToken as SignOptions)

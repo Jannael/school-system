@@ -7,13 +7,14 @@ import bcrypt from 'bcrypt'
 import dotenv from 'dotenv'
 import { Types } from 'mongoose'
 import validator from '../../validator/validator'
+import scoreModel from './../score/model'
 
 dotenv.config({ quiet: true })
 const { BCRYPT_SALT_HASH } = process.env as Pick<IEnv, 'BCRYPT_SALT_HASH'>
 
 const model = {
   user: {
-    create: async function (data: IUser): Promise<IRefreshToken> {
+    create: async function (data: IUser, subjectArray: string[]): Promise<IRefreshToken> {
       try {
         if (data._id !== undefined) throw new UserBadRequest('Invalid credentials', 'You can not put the _id yourself')
         if (data.refreshToken !== undefined) throw new UserBadRequest('Invalid credentials', 'You can not put the refreshToken yourself')
@@ -26,6 +27,7 @@ const model = {
         const hashedPwd = await bcrypt.hash(data.pwd, salt)
         const payload = { ...data, pwd: hashedPwd }
         const result = await dbModel.insertOne({ ...payload })
+        await scoreModel.user.newSemester(result.account, subjectArray)
         const user = await dbModel.findOne({ _id: result._id },
           { pwd: 0, refreshToken: 0 }
         ).lean()

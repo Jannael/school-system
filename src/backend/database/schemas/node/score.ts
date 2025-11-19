@@ -8,7 +8,7 @@ const partialSchema = new Schema({
 })
 
 const schema = new Schema({
-  account: { type: String, required: true, unique: true },
+  account: { type: String, required: true },
   semester: { type: String, required: true },
   One: [partialSchema],
   Two: [partialSchema],
