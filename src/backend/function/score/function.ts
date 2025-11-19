@@ -26,6 +26,22 @@ const functions = {
 
       return await model.user.newSemester(accessToken.account, req.body.subject)
     }
+  },
+  teacher: {
+    update: async function (req: Request, res: Response): Promise<boolean> {
+      const partials = ['One', 'Two', 'Three']
+      if (req.body?.account === undefined ||
+        req.body?.semester === undefined ||
+        req.body?.subject === undefined ||
+        req.body?.score === undefined ||
+        req.body?.partial === undefined ||
+        (req.body?.partial !== undefined &&
+          !partials.includes(req.body?.partial)
+        )
+      ) throw new UserBadRequest('Missing data', 'You need to send account, semester, subject, score, partial(One, Two, Three)')
+
+      return await model.teacher.update(req.body.account, req.body.semester, req.body.subject, req.body.score, req.body.partial``)
+    }
   }
 }
 
