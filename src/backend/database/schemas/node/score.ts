@@ -1,5 +1,6 @@
 import { model, Schema } from 'mongoose'
 import config from '../../../config/config'
+import { IScore } from '../../../interface/score'
 
 const partialSchema = new Schema({
   subject: { type: String, required: true },
@@ -17,4 +18,4 @@ const schema = new Schema({
   collection: 'score'
 })
 
-export default model('score', schema)
+export default model<IScore>('score', schema)

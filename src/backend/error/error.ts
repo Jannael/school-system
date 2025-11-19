@@ -39,7 +39,7 @@ export const UserBadRequest = createError<IUserBadRequest>(400, 'userBadRequest'
 type IDuplicateData = 'User already exists'
 export const DuplicateData = createError<IDuplicateData>(409, 'duplicateData')
 
-type INotFound = 'User not found'
+type INotFound = 'User not found' | 'Score not found'
 export const NotFound = createError<INotFound>(404, 'NotFound')
 
 type IServerError = 'Operation Failed'
