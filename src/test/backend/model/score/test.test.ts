@@ -31,10 +31,10 @@ afterAll(async () => {
 
 describe('score model', () => {
   describe('user', () => {
-    // test('newSemester', async () => {
-    //   const res = await model.user.newSemester(user.account, ['Math', 'Science', 'History'])
-    //   expect(res).toBe(true)
-    // })
+    test('newSemester', async () => {
+      const res = await model.user.newSemester(user.account, ['Math', 'Science', 'History'])
+      expect(res).toBe(true)
+    })
 
     test('get', async () => {
       const res = await model.user.get(user.account, 1)
