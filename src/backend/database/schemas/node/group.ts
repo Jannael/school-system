@@ -1,33 +1,28 @@
 import { model, Schema } from 'mongoose'
 import config from './../../../config/config'
-import { IGroup } from '../../../interface/group'
 
-const techLeadSchema = new Schema<NonNullable<IGroup['techLead']>[number]>({
-  fullName: { type: String, required: true },
-  account: { type: String, required: true }
+const { ObjectId } = Schema.Types
+
+const techLeadSchema = new Schema({
+  fullName: { type: String, require: true },
+  _id: { type: ObjectId, require: true }
 }, {
   ...config.database.mongodb.schemaOptions,
   _id: false
 })
 
-const memberSchema = new Schema<NonNullable<IGroup['member']>[number]>({
-  account: { type: String, required: true },
-  fullName: { type: String, required: true },
-  role: { type: String, required: true }
-}, {
-  ...config.database.mongodb.schemaOptions,
-  _id: false
-})
-
-const schema = new Schema<IGroup>({
-  techLead: [{ type: techLeadSchema, required: true }],
-  name: { type: String, required: true },
+const schema = new Schema({
+  _id: { type: ObjectId },
+  techLead: { type: techLeadSchema, require: true },
+  name: { type: String, require: true },
   repository: { type: String },
-  color: { type: String, required: true },
-  member: [memberSchema]
+  member: [{
+    type: ObjectId,
+    ref: 'user'
+  }]
 }, {
   ...config.database.mongodb.schemaOptions,
   collection: 'group'
 })
 
-export default model<IGroup>('group', schema)
+export default model('group', schema)

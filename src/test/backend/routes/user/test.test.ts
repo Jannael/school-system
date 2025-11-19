@@ -7,8 +7,6 @@ import { IEnv } from '../../../../backend/interface/env'
 import userModel from './../../../../backend/model/user/model'
 import { IRefreshToken } from '../../../../backend/interface/user'
 import dbModel from './../../../../backend/database/schemas/node/user'
-import { IGroup } from '../../../../backend/interface/group'
-import groupModel from '../../../../backend/model/group/model'
 
 dotenv.config({ quiet: true })
 const { TEST_PWD_ENV } = process.env as unknown as IEnv
@@ -16,31 +14,18 @@ const { TEST_PWD_ENV } = process.env as unknown as IEnv
 let app: Express
 let agent: ReturnType<typeof request.agent>
 let user: IRefreshToken
-let group: IGroup
-let secondUser: IRefreshToken
 
 beforeAll(async () => {
   app = await createApp()
   agent = await request.agent(app)
 
-  user = await userModel.create({
+  user = await userModel.user.create({
     fullName: 'test',
     account: 'test@gmail.com',
     pwd: 'test',
+    role: ['documenter'],
     nickName: 'test'
   })
-
-  secondUser = await userModel.create({
-    fullName: 'second test',
-    account: 'secondUser@gmail.com',
-    pwd: 'test',
-    nickName: 'second test'
-  })
-
-  group = await groupModel.create({
-    name: 'test',
-    color: '#000000'
-  }, { account: user.account, fullName: user.fullName })
 })
 
 afterAll(async () => {
@@ -74,6 +59,7 @@ describe('/user/v1/', () => {
       expect(res.body).toStrictEqual({
         fullName: 'test',
         account: 'test@gmail.com',
+        role: ['documenter'],
         nickName: 'test',
         complete: true
       })
@@ -88,7 +74,7 @@ describe('/user/v1/', () => {
           },
           error: {
             code: 400,
-            msg: 'Missing data',
+            msg: 'Invalid credentials',
             description: 'Missing accessToken',
             complete: false
           }
@@ -134,11 +120,13 @@ describe('/user/v1/', () => {
           fullName: 'test',
           account: 'create@gmail.com',
           pwd: '123456',
+          role: ['documenter'],
           nickName: 'test'
         })
       expect(res.body).toStrictEqual({
         fullName: 'test',
         account: 'create@gmail.com',
+        role: ['documenter'],
         nickName: 'test',
         complete: true
       })
@@ -158,8 +146,8 @@ describe('/user/v1/', () => {
           },
           error: {
             code: 400,
-            msg: 'Missing data',
-            description: 'You did not send any information',
+            msg: 'Invalid credentials',
+            description: 'Account not verified',
             complete: false
           }
         },
@@ -173,8 +161,8 @@ describe('/user/v1/', () => {
           },
           error: {
             code: 400,
-            msg: 'Missing data',
-            description: 'Missing account',
+            msg: 'Invalid credentials',
+            description: 'Account not verified',
             complete: false
           }
         },
@@ -190,7 +178,7 @@ describe('/user/v1/', () => {
           error: {
             code: 400,
             msg: 'Invalid credentials',
-            description: 'The account is invalid',
+            description: 'The token is invalid',
             complete: false
           }
         },
@@ -217,6 +205,7 @@ describe('/user/v1/', () => {
                 fullName: 'test',
                 account: 'create@gmail.com',
                 pwd: '123456',
+                role: ['documenter'],
                 nickName: 'test'
               })
           },
@@ -249,6 +238,7 @@ describe('/user/v1/', () => {
               .send({
                 account: 'create1@gmail.com',
                 pwd: '123456',
+                role: ['documenter'],
                 nickName: 'test'
               })
           },
@@ -305,6 +295,7 @@ describe('/user/v1/', () => {
       expect(res.body.user).toStrictEqual({
         fullName: 'new Name',
         account: 'test@gmail.com',
+        role: ['documenter'],
         nickName: 'test'
       })
       expect(res.headers['set-cookie'][2]).toMatch(/account=.*GMT$/)
@@ -315,6 +306,7 @@ describe('/user/v1/', () => {
       expect(secure.body).toStrictEqual({
         fullName: 'new Name',
         account: 'test@gmail.com',
+        role: ['documenter'],
         nickName: 'test',
         complete: true
       })
@@ -332,7 +324,7 @@ describe('/user/v1/', () => {
           error: {
             code: 400,
             msg: 'Missing data',
-            description: 'Missing account',
+            description: 'The\'res missing credentials, make sure to get them before update',
             complete: false
           }
         },
@@ -386,8 +378,8 @@ describe('/user/v1/', () => {
           },
           error: {
             code: 400,
-            msg: 'Invalid credentials',
-            description: 'Invalid input: expected object, received undefined',
+            msg: 'Missing data',
+            description: 'No data to update or invalid data',
             complete: false
           }
         }
@@ -432,6 +424,7 @@ describe('/user/v1/', () => {
       expect(res.body.user).toStrictEqual({
         fullName: 'new Name',
         account: 'test1@gmail.com',
+        role: ['documenter'],
         nickName: 'test'
       })
       expect(res.headers['set-cookie'][2]).toMatch(/newAccount_account=.*GMT$/)
@@ -444,6 +437,7 @@ describe('/user/v1/', () => {
       expect(secure.body).toStrictEqual({
         fullName: 'new Name',
         account: 'test1@gmail.com',
+        role: ['documenter'],
         nickName: 'test',
         complete: true
       })
@@ -459,7 +453,7 @@ describe('/user/v1/', () => {
           error: {
             code: 400,
             msg: 'Missing data',
-            description: 'Missing accessToken',
+            description: 'Make sure to follow the auth flow for this operation',
             complete: false
           }
         }
@@ -515,7 +509,7 @@ describe('/user/v1/', () => {
           error: {
             code: 400,
             msg: 'Missing data',
-            description: 'Missing newPwd',
+            description: 'Make sure to follow the auth flow for this operation',
             complete: false
           }
         }
@@ -535,326 +529,9 @@ describe('/user/v1/', () => {
     })
   })
 
-  describe('/invitation/', () => {
-    describe('/create/invitation/', () => {
-      const endpoint = path + '/create/invitation/'
-      test('', async () => {
-        const res = await agent
-          .post(endpoint)
-          .send({
-            account: secondUser.account,
-            role: 'techLead',
-            _id: group._id
-          })
-
-        expect(res.body.complete).toEqual(true)
-      })
-
-      test('error', async () => {
-        const cases = [
-          {
-            fn: async function () {
-              return await agent
-                .post(endpoint)
-                .send({
-                  account: user.account,
-                  role: 'techLead',
-                  _id: group._id
-                })
-            },
-            error: {
-              code: 403,
-              msg: 'Access denied',
-              description: 'You can not invite yourself to one group',
-              complete: false
-            }
-          },
-          {
-            fn: async function () {
-              return await agent
-                .post(endpoint)
-                .send({
-                  account: secondUser.account,
-                  role: 'techLead'
-                })
-            },
-            error: {
-              code: 400,
-              msg: 'Missing data',
-              description: 'You need to send the _id for the group, account to invite and role',
-              complete: false
-            }
-          }
-        ]
-
-        for (const { fn, error } of cases) {
-          const res = await fn()
-          expect(res.statusCode).toEqual(error.code)
-          expect(res.body.msg).toEqual(error.msg)
-          expect(res.body.complete).toEqual(error.complete)
-          expect(res.body.description).toEqual(error.description)
-        }
-      })
-    })
-
-    describe('/get/invitation/', () => {
-      const endpoint = path + '/get/invitation/'
-      test('', async () => {
-        const agent = request.agent(app)
-        await agent
-          .post('/auth/v1/request/refreshToken/code/')
-          .send({
-            account: secondUser.account,
-            pwd: 'test',
-            TEST_PWD: TEST_PWD_ENV
-          })
-        await agent
-          .post('/auth/v1/request/refreshToken/')
-          .send({
-            code: '1234'
-          })
-
-        const res = await agent
-          .get(endpoint)
-
-        expect(res.body).toStrictEqual({
-          complete: true,
-          invitation: [
-            { name: 'test', _id: expect.any(String), color: '#000000' }
-          ]
-        })
-      })
-
-      test('error', async () => {
-        const cases = [
-          {
-            fn: async function () {
-              return await request(app)
-                .get(endpoint)
-            },
-            error: {
-              code: 400,
-              msg: 'Missing data',
-              description: 'Missing accessToken',
-              complete: false
-            }
-          }
-        ]
-
-        for (const { fn, error } of cases) {
-          const res = await fn()
-          expect(res.statusCode).toEqual(error.code)
-          expect(res.body.msg).toEqual(error.msg)
-          expect(res.body.complete).toEqual(error.complete)
-          expect(res.body.description).toEqual(error.description)
-        }
-      })
-    })
-
-    describe('/reject/invitation/', () => {
-      const endpoint = path + '/reject/invitation/'
-      test('', async () => {
-        const agent = request.agent(app)
-        await agent
-          .post('/auth/v1/request/refreshToken/code/')
-          .send({
-            account: secondUser.account,
-            pwd: 'test',
-            TEST_PWD: TEST_PWD_ENV
-          })
-        await agent
-          .post('/auth/v1/request/refreshToken/')
-          .send({
-            code: '1234'
-          })
-
-        const res = await agent
-          .delete(endpoint)
-          .send({
-            _id: group._id
-          })
-
-        expect(res.body.complete).toEqual(true)
-      })
-
-      test('error', async () => {
-        const cases = [
-          {
-            fn: async function () {
-              return await request(app)
-                .delete(endpoint)
-            },
-            error: {
-              code: 400,
-              msg: 'Missing data',
-              description: 'You did not send the _id for the invitation you want to reject',
-              complete: false
-            }
-          }
-        ]
-
-        for (const { fn, error } of cases) {
-          const res = await fn()
-          expect(res.statusCode).toEqual(error.code)
-          expect(res.body.msg).toEqual(error.msg)
-          expect(res.body.complete).toEqual(error.complete)
-          expect(res.body.description).toEqual(error.description)
-        }
-      })
-    })
-  })
-
-  describe('/group/', () => {
-    describe('/get/group/', () => {
-      const endpoint = path + '/get/group/'
-      test('', async () => {
-        const res = await agent
-          .get(endpoint)
-
-        expect(res.body).toStrictEqual({
-          complete: true,
-          group: [
-            { name: 'test', _id: expect.any(String), color: '#000000' }
-          ]
-        })
-      })
-
-      test('error', async () => {
-        const cases = [
-          {
-            fn: async function () {
-              return await request(app)
-                .get(endpoint)
-            },
-            error: {
-              code: 400,
-              msg: 'Missing data',
-              description: 'Missing accessToken',
-              complete: false
-            }
-          }
-        ]
-
-        for (const { fn, error } of cases) {
-          const res = await fn()
-          expect(res.statusCode).toEqual(error.code)
-          expect(res.body.msg).toEqual(error.msg)
-          expect(res.body.complete).toEqual(error.complete)
-          expect(res.body.description).toEqual(error.description)
-        }
-      })
-    })
-
-    describe('/delete/group/', () => {
-      const endpoint = path + '/delete/group/'
-      test('', async () => {
-        await agent
-          .post(path + '/create/invitation/')
-          .send({
-            account: secondUser.account,
-            role: 'techLead',
-            _id: group._id
-          })
-
-        const res = await agent
-          .delete(endpoint)
-          .send({
-            _id: group._id
-          })
-
-        expect(res.body.complete).toEqual(true)
-
-        const guard = await agent
-          .get(path + '/get/group/')
-
-        expect(guard.body).toStrictEqual({ complete: true, group: [] })
-      })
-
-      test('error', async () => {
-        const cases = [
-          {
-            fn: async function () {
-              return await agent
-                .delete(endpoint)
-            },
-            error: {
-              code: 400,
-              msg: 'Missing data',
-              description: 'You did not send the _id for the group you want to remove',
-              complete: false
-            }
-          }
-        ]
-
-        for (const { fn, error } of cases) {
-          const res = await fn()
-          expect(res.statusCode).toEqual(error.code)
-          expect(res.body.msg).toEqual(error.msg)
-          expect(res.body.complete).toEqual(error.complete)
-          expect(res.body.description).toEqual(error.description)
-        }
-      })
-    })
-
-    describe('/add/group/', () => {
-      const endpoint = path + '/add/group/'
-      test('', async () => {
-        const res = await agent
-          .post(endpoint)
-          .send({
-            _id: group._id
-          })
-        expect(res.body.complete).toEqual(true)
-
-        const guard = await agent
-          .get(path + '/get/group/')
-
-        expect(guard.body).toStrictEqual({
-          complete: true,
-          group: [
-            { name: 'test', _id: expect.any(String), color: '#000000' }
-          ]
-        })
-      })
-
-      test('error', async () => {
-        const cases = [
-          {
-            fn: async function () {
-              return await agent
-                .post(endpoint)
-            },
-            error: {
-              code: 400,
-              msg: 'Missing data',
-              description: 'You did not send the _id for the group you want to add',
-              complete: false
-            }
-          }
-        ]
-
-        for (const { fn, error } of cases) {
-          const res = await fn()
-          expect(res.statusCode).toEqual(error.code)
-          expect(res.body.msg).toEqual(error.msg)
-          expect(res.body.complete).toEqual(error.complete)
-          expect(res.body.description).toEqual(error.description)
-        }
-      })
-    })
-  })
-
   describe('/delete/', () => {
     const endpoint = path + '/delete/'
     test('', async () => {
-      await agent
-        .post(path + '/create/invitation/')
-        .send({
-          account: secondUser.account,
-          role: 'techLead',
-          _id: group._id
-        })
-
       await agent
         .post('/auth/v1/request/code/')
         .send({
@@ -888,7 +565,7 @@ describe('/user/v1/', () => {
           error: {
             code: 400,
             msg: 'Missing data',
-            description: 'Missing accessToken',
+            description: 'Account not verified',
             complete: false
           }
         },
@@ -896,10 +573,11 @@ describe('/user/v1/', () => {
           fn: async function () {
             const agent = request.agent(app)
 
-            user = await userModel.create({
+            user = await userModel.user.create({
               fullName: 'test',
               account: 'test@gmail.com',
               pwd: 'test',
+              role: ['documenter'],
               nickName: 'test'
             })
 

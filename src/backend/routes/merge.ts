@@ -1,11 +1,9 @@
-import auth from './auth/route'
-import user from './user/route'
-import utils from './utils/route'
-import group from './group/route'
+import authRouter from './auth/route'
+import userRouter from './user/route'
+import utilsRouter from './utils/route'
 
 export default {
-  auth,
-  user,
-  utils,
-  group
+  auth: authRouter,
+  user: userRouter,
+  utils: utilsRouter
 }

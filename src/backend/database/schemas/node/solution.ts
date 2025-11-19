@@ -4,8 +4,8 @@ import config from '../../../config/config'
 const { ObjectId } = Schema.Types
 
 const codeSchema = new Schema({
-  language: { type: String, required: true },
-  content: { type: String, required: true }
+  language: { type: String, require: true },
+  content: { type: String, require: true }
 }, {
   ...config.database.mongodb.schemaOptions,
   _id: false
@@ -20,7 +20,7 @@ const schema = new Schema({
     type: String
   }],
   code: codeSchema,
-  description: { type: String, required: true }
+  description: { type: String, require: true }
 }, {
   ...config.database.mongodb.schemaOptions,
   collection: 'solution'

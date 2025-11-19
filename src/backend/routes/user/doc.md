@@ -9,6 +9,7 @@ _Method: GET_
 ### Output
 - `fullName`
 - `account`
+- `role`
 - `nickName`
 - `complete`: boolean
 
@@ -39,11 +40,13 @@ _Method: POST_
 - `fullName`
 - `account`
 - `pwd`
+- `role`
 - `nickName`
 
 ### Output
 - `fullName`
 - `account`
+- `role`
 - `nickName`
 - `complete`: boolean
 
@@ -78,12 +81,14 @@ _Method: PUT_
 
 Here you only can update this fields
 - `fullName`
+- `role`
 - `nickName`
 
 ### Output
 - `user`:
   - `fullName`
   - `account`
+  - `role`
   - `nickName`
 - `complete`: boolean
 
@@ -151,6 +156,7 @@ realize that the only way to change the account its been logged In
 - `user`
     - `fullName`
     - `account`
+    - `role`
     - `nickName`
 - `complete`: boolean
 

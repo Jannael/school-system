@@ -18,16 +18,6 @@ export default {
         strict: true,
         minimize: false
       }
-    },
-    projection: {
-      IRefreshToken: { pwd: 0, refreshToken: 0, invitation: 0, group: 0 }
     }
-  },
-  user: {
-    maxInvitations: 5,
-    maxGroups: 5
-  },
-  group: {
-    maxMembers: 5
   }
 } as const

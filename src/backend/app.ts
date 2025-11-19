@@ -24,7 +24,6 @@ export async function createApp (): Promise<express.Express> {
   app.use('/auth/v1/', router.auth)
   app.use('/user/v1/', router.user)
   app.use('/utils/v1/', router.utils)
-  app.use('/group/v1/', router.group)
 
   return app
 }

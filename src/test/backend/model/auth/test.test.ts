@@ -24,18 +24,19 @@ describe('auth model', () => {
   const notExistUser = '68de8beca3acccec4ac2fddb' as unknown as Types.ObjectId
 
   beforeAll(async () => {
-    user = await userModel.create({
+    user = await userModel.user.create({
       fullName: 'test',
       account: 'test@email.com',
       pwd: 'test',
+      role: ['documenter'],
       nickName: 'test'
     })
   })
 
-  describe('refreshToken', () => {
-    describe('save', () => {
+  describe('auth refreshToken', () => {
+    describe('save refreshToken', () => {
       test('', async () => {
-        const res = await model.refreshToken.save('token', user._id)
+        const res = await model.auth.refreshToken.save('token', user._id)
         expect(res).toBe(true)
       })
 
@@ -43,7 +44,7 @@ describe('auth model', () => {
         const func = [
           {
             fn: async function () {
-              await model.refreshToken.save('', notExistUser)
+              await model.auth.refreshToken.save('', notExistUser)
             },
             error: new NotFound('User not found')
           }
@@ -62,9 +63,9 @@ describe('auth model', () => {
       })
     })
 
-    describe('remove', () => {
+    describe('remove refreshToken', () => {
       test('', async () => {
-        const res = await model.refreshToken.remove('token', user._id)
+        const res = await model.auth.refreshToken.remove('token', user._id)
         expect(res).toBe(true)
       })
 
@@ -72,54 +73,13 @@ describe('auth model', () => {
         const func = [
           {
             fn: async function () {
-              await model.refreshToken.remove('', notExistUser)
+              await model.auth.refreshToken.remove('', notExistUser)
             },
             error: new NotFound('User not found')
           },
           {
             fn: async function () {
-              await model.refreshToken.remove('', '' as unknown as Types.ObjectId)
-            },
-            error: new UserBadRequest('Invalid credentials', 'The _id is invalid')
-          }
-        ]
-
-        for (const { fn, error } of func) {
-          try {
-            await fn()
-            throw new Error('Expected function to throw')
-          } catch (err: any) {
-            expect(err).toBeInstanceOf(error.constructor)
-            expect(err.message).toBe(error.message)
-            expect(err.description).toBe(error.description)
-          }
-        }
-      })
-    })
-
-    describe('verify', () => {
-      test('', async () => {
-      // first we save the token to verify it
-        const save = await model.refreshToken.save('token', user._id)
-        expect(save).toBe(true)
-
-        const res = await model.refreshToken.verify('token', user._id)
-        expect(res).toBe(true)
-
-        await model.refreshToken.remove('token', user._id)
-      })
-
-      test('error', async () => {
-        const func = [
-          {
-            fn: async function () {
-              await model.refreshToken.verify('token', notExistUser)
-            },
-            error: new NotFound('User not found')
-          },
-          {
-            fn: async function () {
-              await model.refreshToken.verify('token', 'invalid' as unknown as Types.ObjectId)
+              await model.auth.refreshToken.remove('', '' as unknown as Types.ObjectId)
             },
             error: new UserBadRequest('Invalid credentials', 'The _id is invalid')
           }
@@ -139,14 +99,56 @@ describe('auth model', () => {
     })
   })
 
-  describe('login', () => {
+  describe('verify refreshToken', () => {
     test('', async () => {
-      const res = await model.login(user.account, 'test')
+      // first we save the token to verify it
+      const save = await model.auth.refreshToken.save('token', user._id)
+      expect(save).toBe(true)
+
+      const res = await model.verify.refreshToken('token', user._id)
+      expect(res).toBe(true)
+
+      await model.auth.refreshToken.remove('token', user._id)
+    })
+
+    test('error', async () => {
+      const func = [
+        {
+          fn: async function () {
+            await model.verify.refreshToken('token', notExistUser)
+          },
+          error: new NotFound('User not found')
+        },
+        {
+          fn: async function () {
+            await model.verify.refreshToken('token', 'invalid' as unknown as Types.ObjectId)
+          },
+          error: new UserBadRequest('Invalid credentials', 'The _id is invalid')
+        }
+      ]
+
+      for (const { fn, error } of func) {
+        try {
+          await fn()
+          throw new Error('Expected function to throw')
+        } catch (err: any) {
+          expect(err).toBeInstanceOf(error.constructor)
+          expect(err.message).toBe(error.message)
+          expect(err.description).toBe(error.description)
+        }
+      }
+    })
+  })
+
+  describe('verify login', () => {
+    test('', async () => {
+      const res = await model.verify.login(user.account, 'test')
 
       expect(res).toStrictEqual({
         _id: expect.any(Types.ObjectId),
         fullName: 'test',
         account: 'test@email.com',
+        role: ['documenter'],
         nickName: 'test'
       })
     })
@@ -155,19 +157,19 @@ describe('auth model', () => {
       const func = [
         {
           fn: async function () {
-            await model.login('account', 'pwd')
+            await model.verify.login('account', 'pwd')
           },
           error: new UserBadRequest('Invalid credentials', 'The account must Match example@service.ext')
         },
         {
           fn: async function () {
-            await model.login('account@gmail.com', 'pwd')
+            await model.verify.login('account@gmail.com', 'pwd')
           },
           error: new NotFound('User not found')
         },
         {
           fn: async function () {
-            await model.login('test@email.com', 'pwd')
+            await model.verify.login('test@email.com', 'pwd')
           },
           error: new UserBadRequest('Invalid credentials', 'Incorrect password')
         }
@@ -186,9 +188,9 @@ describe('auth model', () => {
     })
   })
 
-  describe('exists', () => {
+  describe('verify user', () => {
     test('', async () => {
-      const res = await model.exists(user.account)
+      const res = await model.verify.user(user.account)
       expect(res).toEqual(true)
     })
 
@@ -196,7 +198,7 @@ describe('auth model', () => {
       const cases = [
         {
           fn: async function () {
-            await model.exists('notExists')
+            await model.verify.user('notExists')
           },
           error: new NotFound('User not found')
         }

@@ -1,11 +1,11 @@
 {
-  "name": "devsync",
+  "name": "school-system",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "pnpm jest --verbose --detectOpenHandles",
-    "test:w": "pnpm jest --verbose --detectOpenHandles src/test/backend/routes/user/test.test.ts"
+    "test:w": "pnpm jest --verbose --detectOpenHandles src/test/backend/model/auth/test.test.ts"
   },
   "keywords": [],
   "author": "",

@@ -52,7 +52,7 @@ export function encrypt (text: string, key: string): string {
   return ivHex + ':' + encrypted
 }
 
-export function decrypt (encryptedText: string, key: string, tokenName: string): string {
+export function decrypt (encryptedText: string, key: string): string {
   try {
     const [ivHex, encrypted] = encryptedText.split(':')
     const iv = Buffer.from(ivHex, 'hex')
@@ -65,11 +65,8 @@ export function decrypt (encryptedText: string, key: string, tokenName: string):
     if (e.name === 'TypeError' &&
       e.message === 'Invalid initialization vector'
     ) {
-      throw new UserBadRequest('Invalid credentials', `The ${tokenName} is invalid`)
+      throw new UserBadRequest('Invalid credentials', 'The token is invalid')
     }
     return ''
   }
 }
-
-export const omit = (obj: Record<string, any>, keys: string[]): Record<string, any> =>
-  Object.fromEntries(Object.entries(obj).filter(([key]) => !keys.includes(key)))

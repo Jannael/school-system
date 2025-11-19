@@ -2,7 +2,7 @@ db.createCollection('user', {
   validator: {
     $jsonSchema: {
       bsonType: 'object',
-      required: ['_id', 'fullName', 'account', 'pwd'],
+      required: ['_id', 'fullName', 'account', 'pwd', 'role'],
       additionalProperties: false,
       properties: {
         _id: {
@@ -20,48 +20,25 @@ db.createCollection('user', {
           bsonType: 'string',
           description: 'password'
         },
+        role: {
+          bsonType: 'array',
+          uniqueItems: true,
+          items: {
+            bsonType: 'string'
+          },
+          description: 'roles as strings'
+        },
         nickName: {
           bsonType: 'string',
           description: 'nickname'
-        },
+        }
         refreshToken: {
           bsonType: 'array',
           uniqueItems: true,
-          maxItems: 3,
           items: {
             bsonType: 'string'
           },
           description: 'refreshToken for the user to validate when generating an access token'
-        },
-        invitation: {
-          type: 'array',
-          uniqueItems: true,
-          maxItems: 5,
-          items: {
-            bsonType: 'object',
-            required: ['name', '_id'],
-            additionalProperties: false,
-            properties: {
-              name: { bsonType: 'string' },
-              _id: { bsonType: 'objectId' },
-              color: { bsonType: 'string' }
-            }
-          }
-        },
-        group: {
-          type: 'array',
-          uniqueItems: true,
-          maxItems: 5,
-          items: {
-            bsonType: 'object',
-            required: ['name', '_id'],
-            additionalProperties: false,
-            properties: {
-              name: { bsonType: 'string' },
-              _id: { bsonType: 'objectId' },
-              color: { bsonType: 'string' }
-            }
-          }
         }
       }
     }

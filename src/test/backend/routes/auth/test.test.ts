@@ -18,16 +18,17 @@ beforeAll(async () => {
   app = await createApp()
   agent = await request.agent(app)
 
-  user = await userModel.create({
+  user = await userModel.user.create({
     fullName: 'test',
     account: 'test@gmail.com',
     pwd: 'test',
+    role: ['documenter'],
     nickName: 'test'
   })
 })
 
 afterAll(async () => {
-  await userModel.delete(user._id)
+  await userModel.user.delete(user._id)
   await mongoose.connection.close()
 })
 
@@ -150,7 +151,7 @@ describe('/auth/v1/', () => {
           error: {
             code: 400,
             msg: 'Invalid credentials',
-            description: 'The codeToken is invalid',
+            description: 'The token is invalid',
             complete: false
           }
         },
@@ -387,7 +388,7 @@ describe('/auth/v1/', () => {
           error: {
             code: 400,
             msg: 'Invalid credentials',
-            description: 'The codeToken is invalid',
+            description: 'The token is invalid',
             complete: false
           }
         },
@@ -554,7 +555,7 @@ describe('/auth/v1/', () => {
           error: {
             code: 400,
             msg: 'Invalid credentials',
-            description: 'The accessToken is invalid',
+            description: 'The token is invalid',
             complete: false
           }
         }
@@ -636,7 +637,7 @@ describe('/auth/v1/', () => {
           error: {
             code: 400,
             msg: 'Invalid credentials',
-            description: 'The currentAccountToken is invalid',
+            description: 'The token is invalid',
             complete: false
           }
         },
@@ -864,7 +865,7 @@ describe('/auth/v1/', () => {
           error: {
             code: 400,
             msg: 'Invalid credentials',
-            description: 'The token for pwd change is invalid',
+            description: 'The token is invalid',
             complete: false
           }
         },
