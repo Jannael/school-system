@@ -68,4 +68,22 @@ describe('/score/v1', () => {
     expect(res.status).toBe(200)
     expect(res.body.complete).toBe(true)
   })
+
+  test('/update/', async () => {
+    const res = await agent
+      .post('/score/v1/update/')
+      .send({
+        account: user.account,
+        semester: 1,
+        subject: 'Math',
+        score: 95,
+        partial: 'One'
+      })
+    expect(res.status).toBe(200)
+    expect(res.body.complete).toBe(true)
+    const guard = await agent
+      .get('/score/v1/get/1')
+
+    expect(guard.body.result.One[0].score).toBe(95)
+  })
 })
