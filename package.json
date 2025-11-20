@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "pnpm jest --verbose --detectOpenHandles",
-    "test:w": "pnpm jest --verbose --detectOpenHandles src/test/backend/routes/score/test.test.ts"
+    "test:w": "pnpm jest --verbose --detectOpenHandles src/test/backend/routes/score/test.test.ts",
+    "build": "tsc",
+    "start": "node dist/backend/server.js"
   },
   "keywords": [],
   "author": "",
